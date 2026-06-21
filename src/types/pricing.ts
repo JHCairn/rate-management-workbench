@@ -11,3 +11,7 @@ export interface PricingRecord {
 }
 
 export type Recommendation = "Increase Rate" | "Reduce Rate" | "Maintain Rate";
+
+export interface PrioritizedPricingRecord extends PricingRecord {
+  priorityScore: number;
+}

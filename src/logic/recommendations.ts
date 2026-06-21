@@ -26,3 +26,40 @@ export function calculateRateDifference(record: PricingRecord): number {
 export function calculateRevenue(record: PricingRecord): number {
   return record.internalRate * record.bookedVehicles;
 }
+export function calculatePriorityScore(record: PricingRecord): number {
+  const recommendation = getRecommendation(record);
+
+  if (recommendation === "Maintain Rate") {
+    return 0;
+  }
+
+  let score = 0;
+
+  if (record.utilizationForecast >= 90) {
+    score += 40;
+  }
+
+  if (record.availableVehicles <= 10) {
+    score += 30;
+  }
+
+  if (calculateRevenue(record) >= 10000) {
+    score += 20;
+  }
+
+  if (
+    recommendation === "Increase Rate" &&
+    record.internalRate < record.competitorRate
+  ) {
+    score += 10;
+  }
+
+  if (
+    recommendation === "Reduce Rate" &&
+    record.internalRate > record.competitorRate
+  ) {
+    score += 10;
+  }
+
+  return score;
+}

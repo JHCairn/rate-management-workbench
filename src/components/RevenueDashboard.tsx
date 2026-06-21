@@ -4,7 +4,9 @@ import {
     calculateRateDifference,
     calculateRevenue,
     getRecommendation,
+    calculatePriorityScore,
 } from "../logic/recommendations";
+
 
 function getRecommendationStyle(recommendation: string) {
     switch (recommendation) {
@@ -63,15 +65,23 @@ export function RevenueDashboard() {
                                 <th className="p-4">Available</th>
                                 <th className="p-4">Utilization</th>
                                 <th className="p-4">Revenue</th>
+                                <th className="p-4">Priority</th>
                                 <th className="p-4">Recommendation</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            {pricingData.map((record) => {
+                            {[...pricingData]
+  .sort(
+    (a, b) =>
+      calculatePriorityScore(b) -
+      calculatePriorityScore(a)
+  )
+  .map((record) => {
                                 const recommendation = getRecommendation(record);
                                 const rateDifference = calculateRateDifference(record);
                                 const revenue = calculateRevenue(record);
+                                const priorityScore = calculatePriorityScore(record);
 
                                 return (
                                     <tr key={record.id} className="border-b">
@@ -83,20 +93,12 @@ export function RevenueDashboard() {
                                         <td className="p-4">{rateDifference.toFixed(1)}%</td>
                                         <td className="p-4">{record.bookedVehicles}</td>
                                         <td className="p-4">{record.availableVehicles}</td>
-                                        <td
-                                            className={`p-4 ${getUtilizationStyle(
-                                                record.utilizationForecast
-                                            )}`}
-                                        >
-                                            {record.utilizationForecast}%
-                                        </td>                                        <td className="p-4">€{revenue.toLocaleString()}</td>
-                                        <td className="p-4">
-                                            <span
-                                                className={`rounded-full px-3 py-1 text-xs font-semibold ${getRecommendationStyle(
-                                                    recommendation
-                                                )}`}
-                                            >
-                                                {recommendation}
+                                        <td className={`p-4 ${getUtilizationStyle(record.utilizationForecast
+                                            )}`} >{record.utilizationForecast}%</td>                                        
+                                        <td className="p-4">€{revenue.toLocaleString()}</td>
+                                        <td className="p-4 font-semibold">{priorityScore}</td>
+                                        <td className="p-4"><span className={`rounded-full px-3 py-1 text-xs font-semibold ${getRecommendationStyle(
+                                                    recommendation )}`} >  {recommendation}
                                             </span>
                                         </td>
                                     </tr>
