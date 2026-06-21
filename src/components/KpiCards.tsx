@@ -23,9 +23,9 @@ export function KpiCards({ records }: KpiCardsProps) {
 
   const cards = [
     {
-      label: "Current Revenue",
-      value: `€${totalRevenue.toLocaleString()}`,
-      helper: "Based on booked vehicles",
+    label: "Projected Revenue",
+    value: `€${totalRevenue.toLocaleString()}`,
+    helper: "For visible opportunities",
     },
     {
       label: "Avg. Utilization",
@@ -38,9 +38,9 @@ export function KpiCards({ records }: KpiCardsProps) {
       helper: "Markets in view",
     },
     {
-      label: "Pricing Alerts",
-      value: pricingAlerts.toString(),
-      helper: "Require analyst review",
+    label: "Pricing Actions",
+    value: pricingAlerts.toString(),
+    helper: "Recommended adjustments",
     },
   ];
 
