@@ -1,4 +1,4 @@
-import type { PricingRecord, Recommendation } from "../types/pricing";
+import type { PricingRecord, Recommendation,  } from "../types/pricing";
 
 export function getRecommendation(record: PricingRecord): Recommendation {
   if (
@@ -62,4 +62,42 @@ export function calculatePriorityScore(record: PricingRecord): number {
   }
 
   return score;
+}
+
+export function getPriorityReasons(record: PricingRecord): string[] {
+  const recommendation = getRecommendation(record);
+
+  if (recommendation === "Maintain Rate") {
+    return ["No pricing action recommended based on current rules."];
+  }
+
+  const reasons: string[] = [];
+
+  if (record.utilizationForecast >= 90) {
+    reasons.push(`+40 High utilization (${record.utilizationForecast}%)`);
+  }
+
+  if (record.availableVehicles <= 10) {
+    reasons.push(`+30 Low remaining inventory (${record.availableVehicles} vehicles)`);
+  }
+
+  if (calculateRevenue(record) >= 10000) {
+    reasons.push(`+20 High projected revenue (€${calculateRevenue(record).toLocaleString()})`);
+  }
+
+  if (
+    recommendation === "Increase Rate" &&
+    record.internalRate < record.competitorRate
+  ) {
+    reasons.push("+10 Competitor rate is higher than our rate");
+  }
+
+  if (
+    recommendation === "Reduce Rate" &&
+    record.internalRate > record.competitorRate
+  ) {
+    reasons.push("+10 Our rate is above competitor rate");
+  }
+
+  return reasons;
 }

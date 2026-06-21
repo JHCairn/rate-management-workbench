@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { pricingData } from "../data/mockData";
 import { KpiCards } from "./KpiCards";
 import {
@@ -5,6 +6,7 @@ import {
     calculateRevenue,
     getRecommendation,
     calculatePriorityScore,
+    getPriorityReasons,
 } from "../logic/recommendations";
 
 
@@ -35,6 +37,8 @@ function getUtilizationStyle(utilization: number) {
 
 
 export function RevenueDashboard() {
+
+    const [expandedRecordId, setExpandedRecordId] = useState<number | null>(null);
     return (
         <main className="min-h-screen bg-slate-100 p-8">
             <div className="mx-auto max-w-7xl">
@@ -72,38 +76,80 @@ export function RevenueDashboard() {
 
                         <tbody>
                             {[...pricingData]
-  .sort(
-    (a, b) =>
-      calculatePriorityScore(b) -
-      calculatePriorityScore(a)
-  )
-  .map((record) => {
-                                const recommendation = getRecommendation(record);
-                                const rateDifference = calculateRateDifference(record);
-                                const revenue = calculateRevenue(record);
-                                const priorityScore = calculatePriorityScore(record);
+                                .sort(
+                                    (a, b) =>
+                                        calculatePriorityScore(b) -
+                                        calculatePriorityScore(a)
+                                )
+                                .map((record) => {
+                                    const recommendation = getRecommendation(record);
+                                    const rateDifference = calculateRateDifference(record);
+                                    const revenue = calculateRevenue(record);
+                                    const priorityScore = calculatePriorityScore(record);
+                                    const isExpanded = expandedRecordId === record.id;
+                                    const priorityReasons = getPriorityReasons(record);
 
-                                return (
-                                    <tr key={record.id} className="border-b">
-                                        <td className="p-4 font-medium">{record.location}</td>
-                                        <td className="p-4">{record.vehicleClass}</td>
-                                        <td className="p-4">{record.rentalDate}</td>
-                                        <td className="p-4">€{record.internalRate}</td>
-                                        <td className="p-4">€{record.competitorRate}</td>
-                                        <td className="p-4">{rateDifference.toFixed(1)}%</td>
-                                        <td className="p-4">{record.bookedVehicles}</td>
-                                        <td className="p-4">{record.availableVehicles}</td>
-                                        <td className={`p-4 ${getUtilizationStyle(record.utilizationForecast
-                                            )}`} >{record.utilizationForecast}%</td>                                        
-                                        <td className="p-4">€{revenue.toLocaleString()}</td>
-                                        <td className="p-4 font-semibold">{priorityScore}</td>
-                                        <td className="p-4"><span className={`rounded-full px-3 py-1 text-xs font-semibold ${getRecommendationStyle(
-                                                    recommendation )}`} >  {recommendation}
+                                    return (
+                                        <React.Fragment key={record.id}>
+                                        
+                                        <tr                                         
+                                            className="cursor-pointer border-b hover:bg-slate-50"
+                                            onClick={() =>
+                                                setExpandedRecordId(
+                                                    isExpanded ? null : record.id
+                                                )
+                                            }
+                                        >
+
+                                            <td className="p-4 font-medium">{record.location}</td>
+                                            <td className="p-4">{record.vehicleClass}</td>
+                                            <td className="p-4">{record.rentalDate}</td>
+                                            <td className="p-4">€{record.internalRate}</td>
+                                            <td className="p-4">€{record.competitorRate}</td>
+                                            <td className="p-4">{rateDifference.toFixed(1)}%</td>
+                                            <td className="p-4">{record.bookedVehicles}</td>
+                                            <td className="p-4">{record.availableVehicles}</td>
+                                            <td className={`p-4 ${getUtilizationStyle(record.utilizationForecast
+                                            )}`} >{record.utilizationForecast}%</td>
+                                            <td className="p-4">€{revenue.toLocaleString()}</td>
+                                            <td className="p-4 font-semibold">{priorityScore}
+                                            </td>
+                                            <td className="p-4"><span className={`rounded-full px-3 py-1 text-xs font-semibold ${getRecommendationStyle(
+                                                recommendation)}`} >  {recommendation}
                                             </span>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
+                                            </td>
+                                            
+                                        </tr>
+
+{isExpanded && (
+  <tr className="bg-slate-50">
+    <td colSpan={12} className="p-6">
+      <div className="rounded-lg border border-slate-200 bg-white p-5">
+        <h3 className="text-sm font-bold text-slate-900">
+          Priority Explanation
+        </h3>
+
+        <p className="mt-2 text-sm text-slate-600">
+          This opportunity received a priority score of{" "}
+          <span className="font-semibold text-slate-900">
+            {priorityScore}
+          </span>
+          .
+        </p>
+
+        <ul className="mt-4 space-y-2 text-sm text-slate-700">
+          {priorityReasons.map((reason) => (
+            <li key={reason}>{reason}</li>
+          ))}
+        </ul>
+      </div>
+    </td>
+  </tr>
+)}
+
+</React.Fragment>
+                                    );
+                                })}
                         </tbody>
                     </table>
                 </div>
