@@ -1,4 +1,5 @@
 import { pricingData } from "../data/mockData";
+import { KpiCards } from "./KpiCards";
 import {
   calculateRateDifference,
   calculateRevenue,
@@ -13,10 +14,14 @@ export function RevenueDashboard() {
           Revenue Management Workbench
         </h1>
 
+        
+
         <p className="mt-2 text-slate-600">
           Monitor future rental pricing, competitor rates, inventory position,
           and revenue opportunities.
         </p>
+        
+        <KpiCards records={pricingData} />
 
         <div className="mt-8 overflow-hidden rounded-xl bg-white shadow">
           <table className="w-full border-collapse text-left text-sm">
