@@ -21,13 +21,20 @@ This prototype demonstrates how pricing analysts could evaluate fleet utilizatio
 
 ![Dashboard](screenshots/dashboard.png)
 
-### Pricing Recommendations
+### Pricing Adjustment Recommendations
 
-![Recommendations](screenshots/recommendations.png)
+#### Increase Rental Rate:
 
-### Opportunity Ranking
+![Recommendations](screenshots/recommendation-expl-incr.png)
 
-![Ranking](screenshots/ranking.png)
+#### Decrease Rental Rate:
+
+![Recommendations](screenshots/recommendation-expl-decr.png)
+
+#### Maintain Rental Rate:
+
+![Recommendations](screenshots/recommendation-expl-hold.png)
+
 
 ## Technology
 
